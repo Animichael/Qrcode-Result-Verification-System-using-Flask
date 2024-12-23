@@ -1,0 +1,57 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-white">
+                <h1 class="display-4 mb-4 fw-bold">QRCODE Result Verification System</h1>
+                <p class="lead mb-4">Revolutionizing result verification through secure QR code technology. Instantly verify academic credentials with a simple scan, ensuring authenticity and eliminating fraud.</p>
+                <button type="button" class="verify-btn btn btn-light btn-lg px-5 py-3" data-bs-toggle="modal" data-bs-target="#adminLoginModal">
+                    Verify Certificate
+                    <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+            <div class="col-md-6 hero-image-container">
+                <img src="{{ url_for('static', filename='img/student-bg.png') }}" alt="Student" class="hero-image animated-student">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Our Portal?</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-shield-alt feature-icon mb-3"></i>
+                    <h3>Secure</h3>
+                    <p>Your data is protected with advanced encryption</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-bolt feature-icon mb-3"></i>
+                    <h3>Fast</h3>
+                    <p>Get instant access to your results</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-check-circle feature-icon mb-3"></i>
+                    <h3>Reliable</h3>
+                    <p>Accurate and verified results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+

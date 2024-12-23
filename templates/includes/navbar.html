@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto d-flex align-items-center">
+                <li class="nav-item">
+                    <img src="{{ url_for('static', filename='img/fpn.jpg') }}" alt="College Logo" class="brand-logo">
+                </li>
+                <li class="nav-item">
+                    <span class="navbar-brand mb-0 h1 ms-2" style="font-size: 18px; font-weight: 600; color: #000;">
+                        FEDERAL POLYTECHNIC NASARAWA
+                    </span>
+                </li>
+            </ul>
+            <div class="contact-info me-4">
+                <span class="me-4">
+                    <i class="fas fa-envelope me-2" style="color:darkorange"></i>
+                    info@fpn.edu.ng
+                </span>
+                <span class="me-4">
+                    <i class="fas fa-phone-alt me-2" style="color:#000"></i>
+                    0810 834 7744
+                </span>
+            </div>
+            <button class="btn admin-login-btn" data-bs-toggle="modal" data-bs-target="#adminLoginModal">
+                <i class="fas fa-user me-2"></i>
+                Login
+            </button>
+        </div>
+    </div>
+</nav>

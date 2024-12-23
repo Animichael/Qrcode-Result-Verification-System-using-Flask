@@ -1,0 +1,496 @@
+<!-- department.html -->
+<link rel="shortcut icon" href="/static/img/logo1.jpg" type="image/x-icon">
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="page-title">
+                    <i class="fas fa-building-columns me-2 text-info"></i>
+                    Department Management
+                </h3>
+                <button class="btn" style="background-color: #1a472a; color:white" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+                    <i class="fas fa-plus me-2"></i>Add Department
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Total Departments Card -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-building-columns fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-muted mb-1">Total Departments</h6>
+                            <h3 class="card-title mb-0">24</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Programs Card -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-book-open fa-2x text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-muted mb-1">Active Programs</h6>
+                            <h3 class="card-title mb-0">2</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Students Card -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-users fa-2x text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="card-subtitle text-muted mb-1">Total Students</h6>
+                            <h3 class="card-title mb-0">{{ total_students }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department List Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Department Name</th>
+                            <th>HOD</th>
+                            <th>Faculty</th>
+                            <th>Programs</th>
+                            <th>Students</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-small bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                        <i class="fas fa-laptop-code text-dark"></i>
+                                    </div>
+                                    <span class="fw-medium">Computer Science</span>
+                                </div>
+                            </td>
+                            
+                            <td><span class="badge bg-success">Active</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- more department rows  will be added if needed -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="departmentForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Department Name</label>
+                            <input type="text" class="form-control" name="department_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Faculty</label>
+                            <select class="form-select" name="faculty_id" required>
+                                <!-- Faculties will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">HOD Name</label>
+                            <input type="text" class="form-control" name="hod_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">HOD Email</label>
+                            <input type="email" class="form-control" name="hod_email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Programs Offered</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="programs[]" value="ND">
+                                <label class="form-check-label">National Diploma (ND)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="programs[]" value="HND">
+                                <label class="form-check-label">Higher National Diploma (HND)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department Status</label>
+                            <select class="form-select" name="status" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Department Description</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="departmentForm"   class="btn"  style="background-color: #1a472a; color: aliceblue;">Add Department</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-bg{
+        color:#1a472a;
+    }
+    
+    .icon-small {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .table th {
+        font-weight: 600;
+    }
+    
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .icon-circle i {
+            font-size: 1.2rem !important;
+        }
+    }
+</style>
+<script>
+    // Function to load and display departments
+    function loadDepartments() {
+    fetch('/api/department/list')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update total departments count
+                document.querySelector('.card-title.mb-0').textContent = data.total_departments;
+                
+                const tableBody = document.querySelector('table tbody');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                data.data.forEach(dept => {
+                    const row = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-small bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                        <i class="fas fa-laptop-code text-dark"></i>
+                                    </div>
+                                    <span class="fw-medium">${dept.department_name}</span>
+                                </div>
+                            </td>
+                            <td>${dept.hod_name}</td>
+                            <td>${dept.faculty_name || 'Not Assigned'}</td>
+                            <td>${dept.programs || 'N/A'}</td>
+                            <td>${dept.total_students || '0'}</td>
+                            <td>
+                                <span class="badge bg-${dept.status === 'active' ? 'success' : 'danger'}">
+                                    ${dept.status}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    
+                                    
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteDepartment(${dept.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                console.error('Error:', data.message);
+                alert('Error loading departments');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading departments');
+        });
+}
+
+    
+    // Load faculties for select dropdown
+    function loadFaculties() {
+        fetch('/api/faculty/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const facultySelect = document.querySelector('select[name="faculty_id"]');
+                    facultySelect.innerHTML = '<option value="">Select Faculty</option>';
+                    data.data.forEach(faculty => {
+                        facultySelect.insertAdjacentHTML('beforeend', `
+                            <option value="${faculty.id}">${faculty.faculty_name} (Dean: ${faculty.dean_name})</option>
+                        `);
+                    });
+                }
+            });
+    }
+    
+    // Handle department form submission
+    function submitDepartmentForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        // Handle checkboxes for programs
+        const programs = [];
+        form.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            programs.push(checkbox.value);
+        });
+        formData.append('programs[]', programs);
+    
+        fetch('/api/department/add', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Refresh departments list
+                loadDepartments();
+                
+                // Reset form and close modal
+                form.reset();
+                bootstrap.Modal.getInstance(document.getElementById('addDepartmentModal')).hide();
+                
+                alert('Department added successfully');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding department');
+        });
+    }
+    
+    // Handle department editing
+    function editDepartment(id) {
+    console.log('Editing department:', id); // Debug log
+    fetch(`/api/department/edit/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const dept = data.department;
+                const form = document.getElementById('editDepartmentForm');
+                
+                console.log('Department data:', dept); // Debug log
+                
+                // Fill form fields
+                form.querySelector('[name="department_name"]').value = dept.department_name;
+                form.querySelector('[name="faculty_id"]').value = dept.faculty_id;
+                form.querySelector('[name="hod_name"]').value = dept.hod_name;
+                form.querySelector('[name="hod_email"]').value = dept.hod_email;
+                form.querySelector('[name="status"]').value = dept.status;
+                form.querySelector('[name="description"]').value = dept.description || '';
+                
+                // Handle programs checkboxes
+                if (dept.programs) {
+                    const programs = dept.programs.split(',');
+                    form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = programs.includes(checkbox.value);
+                    });
+                } else {
+                    // Reset checkboxes if no programs
+                    form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+                
+                // Set department ID for the form
+                if (form.querySelector('[name="department_id"]')) {
+                    form.querySelector('[name="department_id"]').value = dept.id;
+                } else {
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'department_id';
+                    idInput.value = dept.id;
+                    form.appendChild(idInput);
+                }
+                
+                // Show modal
+                const editModal = new bootstrap.Modal(document.getElementById('editDepartmentModal'));
+                editModal.show();
+            } else {
+                console.error('Error in response:', data.message);
+                alert('Error: ' + (data.message || 'Failed to fetch department details'));
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching department:', error);
+            alert('Error fetching department details: ' + error.message);
+        });
+}
+
+
+    // Handle update form submission
+    // Update department function
+function updateDepartment(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const departmentId = form.querySelector('[name="department_id"]').value;
+
+    // Handle checkboxes for programs
+    const programs = [];
+    form.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+        programs.push(checkbox.value);
+    });
+    formData.append('programs[]', programs);
+
+    console.log('Updating department:', departmentId); // Debug log
+
+    fetch(`/api/department/update/${departmentId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Refresh departments list
+            loadDepartments();
+            
+            // Close modal
+            const editModal = bootstrap.Modal.getInstance(document.getElementById('editDepartmentModal'));
+            editModal.hide();
+            
+            alert('Department updated successfully');
+        } else {
+            console.error('Error in response:', data.message);
+            alert('Error: ' + (data.message || 'Failed to update department'));
+        }
+    })
+    .catch(error => {
+        console.error('Error updating department:', error);
+        alert('Error updating department: ' + error.message);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const editForm = document.getElementById('editDepartmentForm');
+    if (editForm) {
+        editForm.addEventListener('submit', updateDepartment);
+    }
+});
+    
+    // Handle department deletion
+    function deleteDepartment(id) {
+        if (confirm('Are you sure you want to delete this department?')) {
+            fetch(`/api/department/delete/${id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadDepartments();
+                    alert('Department deleted successfully');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => alert('Error deleting department'));
+        }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDepartments();
+        loadFaculties();
+        
+        // Add form submit handler
+        document.getElementById('departmentForm').addEventListener('submit', submitDepartmentForm);
+    });
+    </script>

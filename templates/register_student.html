@@ -1,0 +1,267 @@
+<link rel="shortcut icon" href="/static/img/logo1.jpg" type="image/x-icon">
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="page-title">
+                    <i class="fas fa-user-graduate me-2 text-warning"></i>
+                    Student Registration
+                </h3>
+                <button class="btn" style="background-color: #1a472a; color:white" data-bs-toggle="modal" data-bs-target="#studentListModal">
+                    <i class="fas fa-list me-2"></i>View Student List
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form id="studentRegistrationForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Surname</label>
+                        <input type="text" class="form-control" name="surname" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Other Names</label>
+                        <input type="text" class="form-control" name="othernames" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Faculty</label>
+                        <select class="form-select" name="faculty_id" id="faculty_select" required>
+                            <option value="">Select Faculty</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="department_id" id="department_select" required>
+                            <option value="">Select Department</option>
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Level</label>
+                        <select class="form-select" name="level" required>
+                            <option value="">Select Level</option>
+                            <option value="ND2">ND2</option>
+                            <option value="HND2">HND2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn" style="background-color: #1a472a; color: white">
+                        <i class="fas fa-save me-2"></i>Register Student
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Student List Modal -->
+<div class="modal fade" id="studentListModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Student List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="studentTable">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Matric No</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Faculty</th>
+                                <th>Department</th>
+                                <th>Level</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .table th {
+        font-weight: 600;
+    }
+    
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Load students function
+    function loadStudents() {
+        fetch('/api/student/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tableBody = document.querySelector('#studentTable tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+
+                    data.data.forEach(student => {
+                        const row = `
+                            <tr>
+                                <td>${student.matric_number}</td>
+                                <td>${student.surname} ${student.othernames}</td>
+                                <td>${student.email}</td>
+                                <td>${student.faculty_name}</td>
+                                <td>${student.department_name}</td>
+                                <td>${student.level}</td>
+                                <td>
+                                    <span class="badge bg-${student.status === 'active' ? 'success' : 'danger'}">
+                                        ${student.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${student.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                } else {
+                    console.error('Error:', data.message);
+                    alert('Error loading students');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading students');
+            });
+    }
+
+    // Load faculties function
+    function loadFaculties() {
+        fetch('/api/faculty/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const facultySelect = document.querySelector('#faculty_select');
+                    facultySelect.innerHTML = '<option value="">Select Faculty</option>';
+                    data.data.forEach(faculty => {
+                        facultySelect.insertAdjacentHTML('beforeend', `
+                            <option value="${faculty.id}">${faculty.faculty_name}</option>
+                        `);
+                    });
+                }
+            });
+    }
+
+    // Load departments based on faculty selection
+    document.querySelector('#faculty_select').addEventListener('change', function() {
+    const facultyId = this.value;
+    const departmentSelect = document.querySelector('#department_select');
+    
+    if (facultyId) {
+        console.log('Selected faculty ID:', facultyId); // Debug log
+        fetch(`/api/departments/by-faculty/${facultyId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Department response:', data); // Debug log
+                if (data.success) {
+                    departmentSelect.innerHTML = '<option value="">Select Department</option>';
+                    data.departments.forEach(dept => {
+                        departmentSelect.insertAdjacentHTML('beforeend', `
+                            <option value="${dept.id}">${dept.department_name}</option>
+                        `);
+                    });
+                } else {
+                    console.error('Error loading departments:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching departments:', error);
+            });
+    } else {
+        departmentSelect.innerHTML = '<option value="">Select Department</option>';
+    }
+});
+
+    // Handle student registration form submission
+    document.getElementById('studentRegistrationForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('/api/student/add', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Student registered successfully!');
+                this.reset();
+                loadStudents();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error registering student');
+        });
+    });
+
+    // Handle student deletion
+    function deleteStudent(id) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            fetch(`/api/student/delete/${id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadStudents();
+                    alert('Student deleted successfully');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => alert('Error deleting student'));
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFaculties();
+        loadStudents();
+    });
+</script>

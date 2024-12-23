@@ -1,0 +1,708 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="shortcut icon" href="/static/img/logo1.jpg" type="image/x-icon">
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="page-title">
+                    <i class="fas fa-file-alt me-2 text-warning"></i>
+                    Generate Result
+                </h3>
+               
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Generation Form -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form id="resultGenerationForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Matric Number</label>
+                        <select class="form-select" name="matric_number" id="matric_select" required>
+                            <option value="">Select Matric Number</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Student Full Name</label>
+                        <input type="text" class="form-control" id="student_name" readonly>
+                        <small class="text-muted">Format: Surname, Other Names</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" id="department" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Programme</label>
+                        <input type="text" class="form-control" name="programme" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">CGPA</label>
+                        <input type="number" step="0.01" min="0" max="4.0" class="form-control" name="cgpa" required 
+                               oninput="if(this.value > 4) this.value = 4;">
+                        <small class="text-muted">Maximum value: 4.0</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Grade</label>
+                        <select class="form-select" name="grade" required>
+                            <option value="">Select Grade</option>
+                            <option value="Distinction">Distinction</option>
+                            <option value="Upper Credit">Upper Credit</option>
+                            <option value="Lower Credit">Lower Credit</option>
+                            <option value="Pass">Pass</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn" style="background-color: #1a472a; color: white">
+                        <i class="fas fa-file-download me-2"></i>Generate Result
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-header bg-transparent border-0">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fas fa-table me-2 text-warning"></i>
+                Result List
+            </h4>
+            <div class="d-flex gap-2">
+                <button class="btn btn-warning" onclick="refreshTable()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+                <button class="btn" style="background-color: #1a472a; color: white" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel me-2"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="resultTable" class="table table-hover border-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="border-0">Matric No</th>
+                        <th class="border-0">Student Name</th>
+                        <th class="border-0">Programme</th>
+                        <th class="border-0">Grade</th>
+                        <th class="border-0">CGPA</th>
+                        <th class="border-0">Date Generated</th>
+                        <th class="border-0">Status</th>
+                        <th class="border-0 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Generated Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="resultTemplate">
+                    <div class="card border-0">
+                        <div class="card-body position-relative p-5">
+                            <!-- Watermark Container -->
+                            <div class="watermark-container">
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                                <div class="watermark-row"><span>fpn</span><span>fpn</span><span>fpn</span></div>
+                               
+                            </div>
+                
+                            <!-- Background Logo -->
+                            <div class="background-logo">
+                                <img src="/static/img/logo1.jpg" style="max-width: 70%;">
+                            </div>
+                
+                            <!-- Content -->
+                            <div class="result-content">
+                                <div class="text-center mb-4">
+                                    <img src="/static/img/logo1.jpg" alt="School Logo" style="height: 100px;">
+                                    <h4 class="mt-3 mb-2">FEDERAL POLYTECHNIC NASARAWA</h4>
+                                    <p class="mb-1">P.M.B 001 Nasarawa</p>
+                                    <p class="mb-1">Nasarawa State</p>
+                                    <p class="text-danger mb-1">(Office of the Registrar)</p>
+                                    <p class="mb-4">(Academic Office)</p>
+                                </div>
+                
+                                <div class="text-end mb-4">
+                                    <p class="mb-0">Date: <span id="result_date"></span></p>
+                                </div>
+                
+                                <div class="mb-4">
+                                    <p>Name of Student: <span class="border-bottom fw-bold" id="result_name"></span></p>
+                                    <p>Matric No: <span class="border-bottom fw-bold" id="result_matric"></span></p>
+                                    <p>Department: <span class="border-bottom fw-bold" id="result_department"></span></p>
+                                </div>
+                
+                                <p>Dear Sir/Madam,</p>
+                                
+                                <h3 class="text-center my-4" style="color: #800000;">STATEMENT OF RESULT</h3>
+                
+                                <p class="text-justify" id="result_content"></p>
+                
+                                <div class="text-end mt-4">
+                                    <div id="qrcode" class="border border-dark p-1" style="width: 102px; height: 102px;"></div>
+                                </div>
+                
+                                <p class="mt-4 fw-bold">Accept our Congratulations.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn" style="background-color: #1a472a; color: white" onclick="printResult()">
+                            <i class="fas fa-print me-2"></i>Print Result
+                        </button>
+                    </div>
+                </div>
+
+               
+<style>
+    /* Table styles */
+#resultTable th {
+    font-weight: 600;
+    color: #333;
+    padding: 1rem;
+}
+
+#resultTable td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-generated {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-printed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+    .card {
+        background-color: white;
+    }
+    
+    .border-bottom {
+        border-bottom: 1px solid #000 !important;
+        padding-bottom: 2px;
+        margin-left: 8px;
+    }
+
+    /* New styles for the result template */
+    #resultTemplate .card {
+        background-color: #f0fff0; /* Light green background */
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Watermark text styling */
+    .watermark-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .watermark-row {
+        display: flex;
+        justify-content: space-around;
+        opacity: 0.1;
+        color: #808080; /* Light gray color */
+        font-size: 24px;
+        font-weight: bold;
+        transform: rotate(-20deg);
+        padding: 20px 0;
+    }
+
+    /* Logo background styling */
+    .background-logo {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.1;
+        z-index: 0;
+        top: 0;
+        left: 0;
+    }
+
+    /* Content styling */
+    .result-content {
+        position: relative;
+        z-index: 1;
+    }
+
+#result_content {
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+#result_content strong {
+    font-weight: 600;
+}
+.modal-xl {
+    max-width: 90%;
+}
+
+#resultTable {
+    width: 100% !important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+.result-content {
+    position: relative;
+    z-index: 1;
+    text-align: left;
+}
+
+#result_content::after {
+    content: "";
+    display: inline-block;
+    width: 100%;
+}
+
+@media print {
+    
+    
+    #resultTemplate {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background-color: #f0fff0 !important;
+    }
+    
+    .modal-footer {
+        display: none !important;
+    }
+    
+    .watermark-container, .background-logo {
+        display: block !important;
+        opacity: 0.1 !important;
+    }
+    
+    #result_content {
+        text-align: left !important;
+    }
+    
+    #result_content strong,
+    #result_name, 
+    #result_matric, 
+    #result_department {
+        font-weight: bold !important;
+    }
+    
+    .border-bottom {
+        border-bottom: 1px solid #000 !important;
+    }
+    
+    .modal-footer {
+        display: none !important;
+    }
+     }
+
+    #result_content strong {
+        font-weight: 600 !important;
+    }
+    
+    #result_content {
+        text-align: justify !important;
+    }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+   // Initialize DataTable
+   let resultTable = $('#resultTable').DataTable({
+    responsive: true,
+    order: [[5, 'desc']],
+    pageLength: 10,
+    language: {
+        paginate: {
+            previous: '<i class="fas fa-chevron-left"></i>',
+            next: '<i class="fas fa-chevron-right"></i>'
+        }
+    },
+    drawCallback: function(settings) {
+        // Style the pagination controls
+        $('.dataTables_paginate .paginate_button').css({
+            'background-color': '#fff',
+            'border': '1px solid #155724',
+            'padding': '0.5rem 0.75rem',
+            'margin': '0 2px',
+            'cursor': 'pointer'
+        });
+
+        $('.dataTables_paginate .paginate_button.current').css({
+            'background-color': '#155724',
+            'color': 'white !important',
+            'border': '1px solid #155724'
+        });
+
+        $('.dataTables_paginate .paginate_button:not(.current):hover').css({
+            'background-color': '#155724',
+            'color': '#155724 !important'
+        });
+
+        // Style the ellipsis
+        $('.dataTables_paginate .ellipsis').css({
+            'padding': '0.5rem 0.75rem'
+        });
+    }
+});
+
+
+// Add this to your existing loadResults function
+function loadResults() {
+    fetch('/api/result/list')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultTable.clear();
+                data.data.forEach(result => {
+                    resultTable.row.add([
+                        result.matric_number,
+                        result.student_name,
+                        result.programme,
+                        result.grade,
+                        result.cgpa,
+                        new Date(result.created_at).toLocaleDateString(),
+                        `<span class="status-badge ${result.status === 'printed' ? 'status-printed' : 'status-generated'}">
+                            ${result.status.charAt(0).toUpperCase() + result.status.slice(1)}
+                        </span>`,
+                        `<div class="d-flex gap-2 justify-content-center">
+                            <button class="btn-sm btn-primary action-btn" onclick="viewResult('${result.id}')">
+                                <i class="fas fa-eye fa-sm"></i>
+                            </button>
+                            ${result.status !== 'printed' ? 
+                                `<button class="btn-sm btn-success action-btn" onclick="printResult('${result.id}')">
+                                    <i class="fas fa-print fa-sm"></i>
+                                </button>` : ''
+                            }
+                            <button class="btn-sm btn-danger action-btn" onclick="deleteResult('${result.id}')">
+                                <i class="fas fa-trash "></i>
+                            </button>
+                        </div>`
+                    ]);
+                });
+                resultTable.draw();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function deleteResult(id) {
+    if (confirm('Are you sure you want to delete this result?')) {
+        fetch(`/api/result/delete/${id}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadResults();
+                alert('Result deleted successfully');
+            } else {
+                alert('Error deleting result: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting result. Please try again.');
+        });
+    }
+}
+
+// New functions for table features
+function refreshTable() {
+    const icon = document.querySelector('button[onclick="refreshTable()"] i');
+    icon.classList.add('fa-spin');
+    loadResults();
+    setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+}
+
+function exportToExcel() {
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `student_results_${date}.xlsx`;
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(document.getElementById('resultTable'));
+    XLSX.utils.book_append_sheet(wb, ws, 'Results');
+    XLSX.writeFile(wb, filename);
+}
+
+
+// Load student matric numbers
+function loadStudents() {
+    fetch('/api/student/list')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const matricSelect = document.querySelector('#matric_select');
+                matricSelect.innerHTML = '<option value="">Select Matric Number</option>';
+                data.data.forEach(student => {
+                    matricSelect.insertAdjacentHTML('beforeend', `
+                        <option value="${student.matric_number}" 
+                            data-name="${student.surname} ${student.othernames}"
+                            data-department="${student.department_name}">
+                            ${student.matric_number}
+                        </option>
+                    `);
+                });
+            }
+        });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if button exists and has correct attributes
+    const listButton = document.querySelector('[data-bs-target="#resultListModal"]');
+    if (listButton) {
+        listButton.addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('resultListModal'));
+            modal.show();
+        });
+    }
+});
+
+// Handle matric number selection
+document.querySelector('#matric_select').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        document.querySelector('#student_name').value = selectedOption.dataset.name;
+        document.querySelector('#department').value = selectedOption.dataset.department;
+    } else {
+        document.querySelector('#student_name').value = '';
+        document.querySelector('#department').value = '';
+    }
+});
+
+// Handle form submission with CGPA validation
+document.getElementById('resultGenerationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const cgpa = parseFloat(formData.get('cgpa'));
+    
+    // Validate CGPA
+    if (cgpa > 4.0) {
+        alert('CGPA cannot be greater than 4.0');
+        return;
+    }
+
+    const studentName = document.querySelector('#student_name').value;
+    const department = document.querySelector('#department').value;
+    const matricNo = document.querySelector('#matric_select').value;
+    const programme = formData.get('programme');
+    const grade = formData.get('grade');
+    const currentDate = new Date().toLocaleDateString('en-GB');
+    const currentYear = new Date().getFullYear();
+
+    // Fill result template
+    document.querySelector('#result_date').textContent = currentDate;
+    document.querySelector('#result_name').textContent = studentName;
+    document.querySelector('#result_matric').textContent = matricNo;
+    document.querySelector('#result_department').textContent = department;
+
+    const resultContent = `This is to certify that <strong>${studentName}</strong> with the Refno (<strong>${matricNo}</strong>), having completed an approved course of study and passed the prescribed examinations, has, by the authority of the Academic Board, been awarded the ${programme} of the Federal Polytechnic, Nasarawa in <strong>${department}</strong> with a grade of <strong>${grade}</strong>, <strong>${cgpa}</strong> CGPA in ${currentYear} Academic Session. The effective date of the award is ${currentDate}.<br><br><strong>The certificate will be issued in due course.</strong>`;
+
+    // Generate QR Code
+    const qrcodeContainer = document.querySelector('#qrcode');
+    qrcodeContainer.innerHTML = '';
+    new QRCode(qrcodeContainer, {
+        text: `Student: ${studentName}\nMatric No: ${matricNo}\nProgramme: ${programme}\nGrade: ${grade}\nCGPA: ${cgpa}`,
+        width: 100,
+        height: 100
+    });
+
+    // Save result to database
+    const resultData = new FormData();
+    resultData.append('matric_number', matricNo);
+    resultData.append('student_name', studentName);
+    resultData.append('department', department);
+    resultData.append('programme', programme);
+    resultData.append('grade', grade);
+    resultData.append('cgpa', cgpa);
+    resultData.append('status', 'generated');
+
+    fetch('/api/result/add', {
+        method: 'POST',
+        body: resultData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show result modal
+            const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+            resultModal.show();
+            
+            // Refresh result list
+            loadResults();
+        } else {
+            alert('Error saving result: ' + data.message);
+        }
+    });
+});
+
+// Print function
+function printResult() {
+    const matricNo = document.querySelector('#result_matric').textContent;
+    const studentName = document.querySelector('#result_name').textContent;
+    const department = document.querySelector('#result_department').textContent;
+    const content = document.querySelector('#result_content').innerHTML;
+
+    // Update result status with all required fields
+    fetch('/api/result/update-status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            matric_number: matricNo,
+            student_name: studentName,
+            department: department,
+            content: content,
+            status: 'printed'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Print the document
+            window.print();
+            
+            // Refresh the result list table
+            loadResults();
+            
+            // Optional: Show success message
+            setTimeout(() => {
+                alert('Result printed successfully!');
+            }, 1000);
+        } else {
+            alert('Error updating result status: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating result status. Please try again.');
+    });
+}
+
+
+// View result function
+function viewResult(id) {
+    fetch(`/api/result/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const result = data.result;
+                
+                // Fill result template with data
+                document.querySelector('#result_date').textContent = result.created_at;
+                document.querySelector('#result_name').textContent = result.student_name;
+                document.querySelector('#result_matric').textContent = result.matric_number;
+                document.querySelector('#result_department').textContent = result.department;
+
+                // Create formatted content by parsing the existing content and replacing text
+                const contentElement = document.querySelector('#result_content');
+                const currentYear = new Date().getFullYear();
+                
+                // Create the content with HTML tags
+                const formattedContent = result.content.replace(
+                    result.student_name, `<strong>${result.student_name}</strong>`
+                ).replace(
+                    result.matric_number, `<strong>${result.matric_number}</strong>`
+                ).replace(
+                    result.department, `<strong>${result.department}</strong>`
+                ).replace(
+                    result.grade, `<strong>${result.grade}</strong>`
+                ).replace(
+                    result.cgpa.toString(), `<strong>${result.cgpa}</strong>`
+                );
+
+                // Set the inner HTML of the content element
+                contentElement.innerHTML = formattedContent;
+
+                // Generate QR Code
+                const qrcodeContainer = document.querySelector('#qrcode');
+                qrcodeContainer.innerHTML = ''; // Clear existing QR code
+                
+                // Create QR code with formatted text
+                new QRCode(qrcodeContainer, {
+                    text: `Student: ${result.student_name}\nMatric No: ${result.matric_number}\nProgramme: ${result.programme}\nGrade: ${result.grade}\nCGPA: ${result.cgpa}`,
+                    width: 100,
+                    height: 100
+                });
+
+                // Show modal
+                const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+                resultModal.show();
+            } else {
+                // Handle error case
+                alert('Error loading result: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading result. Please try again.');
+        });
+}
+
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadStudents();
+    loadResults();
+});
+</script>

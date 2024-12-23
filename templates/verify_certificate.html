@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-card {
+            background-color: #f0fff0;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .custom-card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .verify-title {
+            color: #1a472a;
+            font-weight: 600;
+        }
+
+        .camera-btn {
+            background-color: #1a472a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .camera-btn:hover {
+            background-color: #143620;
+            transform: translateY(-2px);
+        }
+
+        .camera-icon {
+            margin-right: 10px;
+        }
+
+        /* Custom Responsive Styles */
+        @media (max-width: 768px) {
+            .custom-card {
+                margin: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .verify-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="page-title">
+                        <i class="fas fa-qrcode me-2 text-warning"></i>
+                        Verify Result
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card custom-card shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h2 class="verify-title">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Result Verification Board
+                            </h2>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button class="camera-btn">
+                                <i class="fas fa-camera camera-icon"></i>
+                                Scan QR Code
+                            </button>
+                        </div>
+                        <!-- <div class="text-center mt-3">
+                            <button class="btn btn-link" onclick="checkCameraPermission()">
+                                <i class="fas fa-cog me-2"></i>Check Camera Permissions
+                            </button>
+                        </div> -->
+                        <div id="qr-reader" class="mt-4" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                        <!-- Placeholder for camera feed or QR scanner -->
+                       
+                        <div class="qr-feedback-container mt-3">
+                            <div class="qr-feedback text-center">
+                                <span class="badge bg-primary">Ready to scan</span>
+                            </div>
+                            <div class="scan-tip text-muted text-center mt-2">
+                                <small>Hold the QR code steady and ensure good lighting</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Table Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card custom-card shadow-sm">
+                <div class="card-header bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-list me-2 text-warning"></i>
+                            Verification History
+                        </h4>
+                        <button class="btn camera-btn" onclick="refreshTable()">
+                            <i class="fas fa-sync-alt me-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="verificationTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Matric Number</th>
+                                    <th>Student Name</th>
+                                    <th>Department</th>
+                                    <th>Grade</th>
+                                    <th>CGPA</th>
+                                    <th>Verification Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal after your table section -->
+<div class="modal fade" id="verificationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Verify Student Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="verificationForm">
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="departmentSelect" required>
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Matric Number</label>
+                        <select class="form-select" id="matricSelect" required>
+                            <option value="">Select Matric Number</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn camera-btn" onclick="saveVerification()">Verify</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- CSS for DataTable -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    
+    <style>
+        /* DataTable Custom Styling */
+        .page-item.active .page-link {
+            background-color: #1a472a !important;
+            border-color: #1a472a !important;
+        }
+        
+        .page-link {
+            color: #1a472a !important;
+        }
+        
+        .page-item.active .page-link {
+            color: white !important;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #f0fff0 !important;
+            border-color: #1a472a !important;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: #1a472a !important;
+            color: white !important;
+        }
+        .qr-feedback-container {
+    margin: 15px auto;
+    max-width: 500px;
+}
+
+#qr-reader {
+    border: 2px solid #1a472a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#qr-reader video {
+    width: 100% !important;
+    border-radius: 8px;
+}
+
+#qr-reader__scan_region {
+    position: relative;
+}
+
+#qr-reader__scan_region::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid #1a472a;
+    border-radius: 10px;
+    animation: scan 2s infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-100%); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.5; }
+}
+    </style>
+
+    <!-- Additional Scripts for DataTable -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+<script>
+   // Initialize DataTable
+// Initialize DataTable
+$(document).ready(function() {
+    $('#verificationTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        order: [[5, 'desc']], // Sort by verification date by default
+        language: {
+            paginate: {
+                previous: '<i class="fas fa-chevron-left"></i>',
+                next: '<i class="fas fa-chevron-right"></i>'
+            }
+        }
+    });
+});
+
+// Initialize scanning variables
+let scanner = null;
+let isScanning = false;
+
+// Initialize verification table
+const verificationTable = $('#verificationTable').DataTable({
+    ajax: {
+        url: '/api/verify/list',
+        dataSrc: 'data'
+    },
+    columns: [
+        { data: 'matric_number' },
+        { data: 'student_name' },
+        { data: 'department' },
+        { data: 'grade' },
+        { data: 'cgpa' },
+        { data: 'verification_date' },
+        { 
+            data: 'status',
+            render: function(data) {
+                return `<span class="badge bg-success">Verified</span>`;
+            }
+        }
+    ]
+});
+
+// Handle QR Scanner button click
+document.querySelector('.camera-btn').addEventListener('click', async function() {
+    if (!isScanning) {
+        await startScanning();
+    } else {
+        await stopScanning();
+    }
+});
+
+async function startScanning() {
+    try {
+        // Create video element if it doesn't exist
+        let videoElement = document.querySelector('#qr-reader video');
+        if (!videoElement) {
+            videoElement = document.createElement('video');
+            document.getElementById('qr-reader').appendChild(videoElement);
+        }
+
+        // Create scanner instance if it doesn't exist
+        if (!scanner) {
+            scanner = new Instascan.Scanner({
+                video: videoElement,
+                mirror: false,
+                continuous: true
+            });
+
+            // Add scan listener only once when creating scanner
+            scanner.addListener('scan', onScanSuccess);
+        }
+
+        // Get available cameras
+        const cameras = await Instascan.Camera.getCameras();
+        
+        if (cameras.length > 0) {
+            // Prefer back camera if available
+            const backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
+            const selectedCamera = backCamera || cameras[0];
+            
+            // Start scanning
+            await scanner.start(selectedCamera);
+            isScanning = true;
+            
+            // Update button text
+            document.querySelector('.camera-btn').innerHTML = 
+                '<i class="fas fa-stop camera-icon"></i>Stop Scanning';
+                
+            // Update feedback text
+            const feedbackElement = document.querySelector('.qr-feedback');
+            if (feedbackElement) {
+                feedbackElement.innerHTML = '<span class="badge bg-success">Camera Active - Ready to Scan</span>';
+            }
+        } else {
+            throw new Error('No cameras found on your device');
+        }
+    } catch (error) {
+        console.error('Scanner Error:', error);
+        Swal.fire({
+            title: 'Camera Error',
+            text: error.message || 'Unable to access camera. Please ensure camera permissions are granted.',
+            icon: 'error',
+            confirmButtonColor: '#1a472a'
+        });
+    }
+}
+
+async function onScanSuccess(decodedText) {
+    try {
+        const lines = decodedText.split('\n');
+        const data = {};
+        
+        // Parse QR code content
+        lines.forEach(line => {
+            const [key, value] = line.split(': ');
+            if (key && value) {
+                const keyMap = {
+                    'Student': 'student_name',
+                    'Matric No': 'matric_number',
+                    'Programme': 'programme',
+                    'Grade': 'grade',
+                    'CGPA': 'cgpa'
+                };
+                const normalizedKey = keyMap[key.trim()] || key.trim();
+                data[normalizedKey] = value.trim();
+            }
+        });
+
+        // Verify if QR code was generated by the system
+        if (data.matric_number && data.student_name) {
+            await showSuccessMessage();
+            await loadDepartmentsAndShowModal();
+        } else {
+            showErrorMessage();
+        }
+    } catch (e) {
+        showErrorMessage();
+    }
+}
+
+function showSuccessMessage() {
+    return Swal.fire({
+        title: 'Result is Authentic',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+    });
+}
+
+function showErrorMessage() {
+    return Swal.fire({
+        title: 'Result is Fake',
+        icon: 'error',
+        timer: 2000,
+        showConfirmButton: false
+    });
+}
+
+async function stopScanning() {
+    if (scanner) {
+        try {
+            await scanner.stop();
+            isScanning = false;
+            document.querySelector('.camera-btn').innerHTML = 
+                '<i class="fas fa-camera camera-icon"></i>Scan QR Code';
+            
+            // Clear the video element
+            const qrReader = document.getElementById('qr-reader');
+            qrReader.innerHTML = '';
+        } catch (error) {
+            console.error('Error stopping scanner:', error);
+        }
+    }
+}
+
+function loadDepartmentsAndShowModal() {
+    fetch('/api/verify/get-departments')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('departmentSelect');
+                select.innerHTML = '<option value="">Select Department</option>';
+                data.departments.forEach(dept => {
+                    select.insertAdjacentHTML('beforeend', 
+                        `<option value="${dept}">${dept}</option>`);
+                });
+                
+                const modal = new bootstrap.Modal(document.getElementById('verificationModal'));
+                modal.show();
+            }
+        });
+}
+
+// Handle department selection
+document.getElementById('departmentSelect').addEventListener('change', function() {
+    if (this.value) {
+        fetch(`/api/verify/get-matric-numbers/${encodeURIComponent(this.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const select = document.getElementById('matricSelect');
+                    select.innerHTML = '<option value="">Select Matric Number</option>';
+                    data.matric_numbers.forEach(matric => {
+                        select.insertAdjacentHTML('beforeend', 
+                            `<option value="${matric}">${matric}</option>`);
+                    });
+                }
+            });
+    }
+});
+
+function saveVerification() {
+    const matric_number = document.getElementById('matricSelect').value;
+    if (!matric_number) {
+        alert('Please select a matric number');
+        return;
+    }
+    
+    fetch('/api/verify/save-verification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ matric_number })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            verificationTable.ajax.reload();
+            bootstrap.Modal.getInstance(document.getElementById('verificationModal')).hide();
+            Swal.fire({
+                title: 'Success',
+                text: 'Verification saved successfully',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            alert('Error saving verification: ' + data.message);
+        }
+    });
+}
+
+// Add refresh function for the table
+function refreshTable() {
+    const icon = document.querySelector('button[onclick="refreshTable()"] i');  
+    icon.classList.add('fa-spin');
+    verificationTable.ajax.reload(null, false);
+    setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+}
+</script>
+</body>
+</html>
